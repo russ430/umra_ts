@@ -26,7 +26,9 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
+  Updates: undefined;
   Home: undefined;
+  More: undefined;
   Schedule: undefined;
 };
 

@@ -12,7 +12,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -22,6 +22,8 @@ import NotFoundScreen from '../screens/NotFoundScreen';
 import ScheduleScreen from '../screens/ScheduleScreen';
 import { RootStackParamList, RootTabParamList } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import UpdatesScreen from '../screens/UpdatesScreen';
+import MoreScreen from '../screens/MoreScreen';
 
 export default function Navigation({
   colorScheme,
@@ -93,6 +95,26 @@ function BottomTabNavigator() {
           title: 'Schedule',
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="calendar-o" color={color} />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Updates"
+        component={UpdatesScreen}
+        options={{
+          headerShown: true,
+          title: 'Updates',
+          tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="More"
+        component={MoreScreen}
+        options={{
+          headerShown: true,
+          title: 'More',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ellipsis-h" color={color} />
           ),
         }}
       />
