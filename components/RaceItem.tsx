@@ -1,13 +1,30 @@
 import { StyleSheet } from 'react-native';
+import { format, parseISO } from 'date-fns';
 
 import { Text, View } from '../components/Themed';
 
-export default function RaceItem() {
+export interface Race {
+  id: string;
+  boathouse: string;
+  end_date: string;
+  location: string;
+  race_name: string;
+  start_date: string;
+}
+
+interface RaceItemProps {
+  race: Race;
+}
+
+export default function RaceItem(props: RaceItemProps) {
+  const {
+    race: { race_name, location, start_date },
+  } = props;
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>April 24th</Text>
-      <Text style={styles.name}>Donahue Rowing Center</Text>
-      <Text style={styles.location}>Worcester, MA</Text>
+      <Text style={styles.date}>{format(parseISO(start_date), 'MMMM do')}</Text>
+      <Text style={styles.name}>{race_name}</Text>
+      <Text style={styles.location}>{location}</Text>
     </View>
   );
 }
@@ -16,7 +33,7 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 8,
   },
-  title: {
+  date: {
     fontSize: 16,
     fontWeight: 'bold',
   },
