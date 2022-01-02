@@ -2,20 +2,24 @@ import { StyleSheet } from 'react-native';
 
 import { Text, View } from '../components/Themed';
 import Timestamp from './Timestamp';
+import { Update } from './types';
 
-export default function UpdateItem() {
+interface UpdateProps {
+  update: Update;
+}
+
+export default function UpdateItem(props: UpdateProps) {
+  const {
+    update: { author, body, date, position },
+  } = props;
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.author}>Tony Cronin</Text>
-        <Text style={styles.position}>- Head Coach</Text>
-        <Text style={styles.body}>
-          We're excited to finally launch our mobile app to the masses! Check
-          back here often to see what the team is up to and when our next race
-          is.
-        </Text>
+        <Text style={styles.author}>{author}</Text>
+        <Text style={styles.position}>- {position}</Text>
+        <Text style={styles.body}>{body}</Text>
       </View>
-      <Timestamp />
+      <Timestamp date_posted={date} />
     </View>
   );
 }

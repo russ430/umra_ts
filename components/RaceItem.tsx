@@ -2,15 +2,7 @@ import { StyleSheet } from 'react-native';
 import { format, parseISO } from 'date-fns';
 
 import { Text, View } from '../components/Themed';
-
-export interface Race {
-  id: string;
-  boathouse: string;
-  end_date: string;
-  location: string;
-  race_name: string;
-  start_date: string;
-}
+import { Race } from './types';
 
 interface RaceItemProps {
   race: Race;

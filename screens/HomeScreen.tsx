@@ -8,7 +8,7 @@ import RaceItem from '../components/RaceItem';
 import SectionHeader from '../components/SectionHeader';
 import { SafeAreaView } from '../components/Themed';
 import UpdateItem from '../components/UpdateItem';
-import { Race } from '../components/RaceItem';
+import { Race } from '../components/types';
 
 export default function HomeScreen() {
   const [races, setRaces] = useState<Race[] | null>(null);
@@ -43,7 +43,6 @@ export default function HomeScreen() {
         <Text>Loading...</Text>
       )}
       <SectionHeader>Latest Updates</SectionHeader>
-      <UpdateItem />
     </SafeAreaView>
   );
 }
