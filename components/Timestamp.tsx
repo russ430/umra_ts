@@ -3,11 +3,11 @@ import { formatDistance, parseISO } from 'date-fns';
 
 import { Text, View } from './Themed';
 
-interface TimestampProps {
+interface Props {
   date_posted: string;
 }
 
-export default function Timestamp(props: TimestampProps) {
+export default function Timestamp(props: Props) {
   const { date_posted } = props;
   return (
     <View style={styles.container}>

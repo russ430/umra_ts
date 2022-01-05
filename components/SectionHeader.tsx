@@ -5,11 +5,11 @@ import { Text, View } from '../components/Themed';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
-type CompProps = {
+type Props = {
   children: string;
 };
 
-export default function HomeScreen(props: CompProps) {
+export default function HomeScreen(props: Props) {
   const { children } = props;
   const colorScheme = useColorScheme();
   return (

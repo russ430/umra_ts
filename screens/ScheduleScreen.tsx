@@ -1,12 +1,13 @@
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore/lite';
 import { db } from '../firebase';
 
+import { Text } from '../components/Themed';
 import RaceItem from '../components/RaceItem';
 import SectionHeader from '../components/SectionHeader';
 import { SafeAreaView } from '../components/Themed';
-import { Race } from '../components/RaceItem';
+import { Race } from '../components/types';
 
 export default function ScheduleScreen() {
   const [races, setRaces] = useState<Race[] | null>(null);

@@ -4,11 +4,11 @@ import { format, parseISO } from 'date-fns';
 import { Text, View } from '../components/Themed';
 import { Race } from './types';
 
-interface RaceItemProps {
+interface Props {
   race: Race;
 }
 
-export default function RaceItem(props: RaceItemProps) {
+export default function RaceItem(props: Props) {
   const {
     race: { race_name, location, start_date },
   } = props;
