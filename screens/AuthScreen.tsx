@@ -14,8 +14,9 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { db } from '../firebase';
+import * as EmailValidator from 'email-validator';
 
-import { setError, setUser, UserData } from '../redux/slices/userSlice';
+import { setUser, UserData } from '../redux/slices/userSlice';
 import HeaderImage from '../components/HeaderImage';
 import Button from '../components/Button';
 import { SafeAreaView, Text, View } from '../components/Themed';
@@ -25,9 +26,14 @@ import useColorScheme from '../hooks/useColorScheme';
 export default function AuthScreen() {
   const [isLoginForm, setIsLoginForm] = useState(true);
   const [email, onChangeEmail] = useState('');
+  const [isValidEmail, setisValidEmail] = useState(true);
+  const [isEmailInUse, setIsEmailInUse] = useState(false);
   const [password, onChangePassword] = useState('');
+  const [isValidPassword, setIsValidPassword] = useState(true);
   const [gradYear, onChangeGradYear] = useState('');
+  const [isGradYearValid, setIsGradYearValid] = useState(true);
   const [name, onChangeName] = useState('');
+  const [invalidCredentials, setInvalidCredentials] = useState(false);
 
   const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
@@ -38,6 +44,55 @@ export default function AuthScreen() {
     onChangePassword('');
     onChangeEmail('');
     onChangeName('');
+    setIsValidPassword(true);
+    setisValidEmail(true);
+  };
+
+  const isButtonDisabled = () => {
+    if (isLoginForm) {
+      return email == '' || password == '' || !isValidEmail || !isValidPassword;
+    }
+    return (
+      email == '' ||
+      password == '' ||
+      gradYear == '' ||
+      name == '' ||
+      !isValidEmail ||
+      !isValidPassword ||
+      !isGradYearValid
+    );
+  };
+
+  const onChangeEmailHandler = (text: string) => {
+    setInvalidCredentials(false);
+    const trimmed = text.trim();
+    setIsEmailInUse(false);
+    if (!EmailValidator.validate(trimmed)) {
+      setisValidEmail(false);
+    } else {
+      setisValidEmail(true);
+    }
+    onChangeEmail(trimmed);
+  };
+
+  const onChangePasswordHandler = (text: string) => {
+    setInvalidCredentials(false);
+    if (text.length < 6) {
+      setIsValidPassword(false);
+    } else {
+      setIsValidPassword(true);
+    }
+    onChangePassword(text);
+  };
+
+  const onChangeGradYearHandler = (text: string) => {
+    const year = parseFloat(text);
+    if (year < 1900 || year > 2100) {
+      setIsGradYearValid(false);
+    } else {
+      setIsGradYearValid(true);
+    }
+    onChangeGradYear(text);
   };
 
   const getUserData = (id: string) => {
@@ -50,30 +105,40 @@ export default function AuthScreen() {
     });
   };
 
-  const setUserError = (error: { name: string; code: string }) => {
-    dispatch(setError(error));
+  const handleLoginErrors = (error: { name: string; code: string }) => {
+    setInvalidCredentials(true);
   };
 
   const login = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         getUserData(userCredential.user.uid);
+        resetInputs();
       })
       .catch((error) => {
-        const userError = { name: error.name, code: error.code };
-        setUserError(userError);
+        handleLoginErrors({ name: error.name, code: error.code });
       });
   };
 
+  const handleSignupErrors = (error: { name: string; code: string }) => {
+    switch (error.code) {
+      case 'auth/email-already-in-use':
+        setIsEmailInUse(true);
+        break;
+      default:
+        return;
+    }
+  };
+
   const signup = () => {
-    createUserWithEmailAndPassword(auth, email, password).then(
-      (userCredential) => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
         const { uid } = userCredential.user;
         const userData: UserData = {
           admin: false,
           email,
           name,
-          grad_year: gradYear,
+          grad_year: parseFloat(gradYear),
           position: '',
         };
         setDoc(doc(db, 'users', uid), userData)
@@ -81,13 +146,14 @@ export default function AuthScreen() {
             setUser(userData);
           })
           .catch((error) => {
-            const userError = { name: error.name, code: error.code };
-            setUserError(userError);
+            handleSignupErrors({ name: error.name, code: error.code });
           });
         dispatch(setUser(userData));
-      }
-    );
-    resetInputs();
+        resetInputs();
+      })
+      .catch((error) => {
+        handleSignupErrors({ name: error.name, code: error.code });
+      });
   };
 
   const submitButtonHandler = () => {
@@ -96,7 +162,6 @@ export default function AuthScreen() {
     } else {
       signup();
     }
-    resetInputs();
   };
 
   const switchFormTypeHandler = () => {
@@ -111,6 +176,18 @@ export default function AuthScreen() {
         <HeaderImage />
         <Text style={styles.header}>{isLoginForm ? 'Login' : 'Signup'}</Text>
         <View style={styles.form}>
+          <View style={styles.invalidInputContainer}>
+            {invalidCredentials ? (
+              <Text
+                style={[
+                  styles.invalidInput,
+                  { color: Colors[colorScheme].invalidText },
+                ]}
+              >
+                Invalid email or password
+              </Text>
+            ) : null}
+          </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>email</Text>
             <TextInput
@@ -118,10 +195,32 @@ export default function AuthScreen() {
                 { borderColor: Colors[colorScheme].inputBorder },
                 styles.input,
               ]}
-              onChangeText={onChangeEmail}
+              onChangeText={(text) => onChangeEmailHandler(text)}
               value={email}
               autoCapitalize="none"
             />
+            <View style={styles.invalidInputContainer}>
+              {!isValidEmail && !isLoginForm ? (
+                <Text
+                  style={[
+                    styles.invalidInput,
+                    { color: Colors[colorScheme].invalidText },
+                  ]}
+                >
+                  Invalid email
+                </Text>
+              ) : null}
+              {isEmailInUse && !isLoginForm ? (
+                <Text
+                  style={[
+                    styles.invalidInput,
+                    { color: Colors[colorScheme].invalidText },
+                  ]}
+                >
+                  Email already in use
+                </Text>
+              ) : null}
+            </View>
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>password</Text>
@@ -130,10 +229,23 @@ export default function AuthScreen() {
                 { borderColor: Colors[colorScheme].inputBorder },
                 styles.input,
               ]}
-              onChangeText={onChangePassword}
+              onChangeText={(text) => onChangePasswordHandler(text)}
               value={password}
               autoCapitalize="none"
+              secureTextEntry={true}
             />
+            <View style={styles.invalidInputContainer}>
+              {!isValidPassword && !isLoginForm ? (
+                <Text
+                  style={[
+                    styles.invalidInput,
+                    { color: Colors[colorScheme].invalidText },
+                  ]}
+                >
+                  Password must be greater than 6 characters
+                </Text>
+              ) : null}
+            </View>
           </View>
           {!isLoginForm ? (
             <>
@@ -157,15 +269,30 @@ export default function AuthScreen() {
                     { borderColor: Colors[colorScheme].inputBorder },
                     styles.input,
                   ]}
-                  onChangeText={onChangeGradYear}
+                  onChangeText={(text) => onChangeGradYearHandler(text)}
                   value={gradYear}
                   keyboardType="number-pad"
                   autoCapitalize="none"
+                  maxLength={4}
                 />
+                <View style={styles.invalidInputContainer}>
+                  {!isGradYearValid ? (
+                    <Text
+                      style={[
+                        styles.invalidInput,
+                        { color: Colors[colorScheme].invalidText },
+                      ]}
+                    >
+                      Invalid grad year
+                    </Text>
+                  ) : null}
+                </View>
               </View>
             </>
           ) : null}
-          <Button onPress={submitButtonHandler}>submit</Button>
+          <Button disabled={isButtonDisabled()} onPress={submitButtonHandler}>
+            submit
+          </Button>
         </View>
 
         <View>
@@ -201,6 +328,12 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginVertical: 12,
+  },
+  invalidInput: {
+    fontWeight: 'bold',
+  },
+  invalidInputContainer: {
+    marginTop: 8,
   },
   label: {
     fontSize: 13,
