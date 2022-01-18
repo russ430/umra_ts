@@ -52,19 +52,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   const dispatch = useDispatch();
-  const [isUser, setIsUser] = useState<Boolean>(false);
+  const [isUser, setIsUser] = useState(false);
   const auth = getAuth();
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        dispatch(setUser(user));
-        setIsUser(true);
-      } else {
-        setIsUser(false);
-      }
-    });
-  }, []);
   return (
     <Stack.Navigator>
       {isUser ? (
