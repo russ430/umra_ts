@@ -8,17 +8,26 @@ interface Props {
   children: string;
   style?: Object;
   onPress?: (event: GestureResponderEvent) => void;
+  disabled?: boolean | null | undefined;
 }
 
 export default function Button(props: Props) {
-  const { children, onPress } = props;
+  const { children, disabled, onPress } = props;
   const colorScheme = useColorScheme();
   return (
-    <Pressable style={[styles.container, props.style]} onPress={onPress}>
+    <Pressable
+      disabled={disabled}
+      style={[styles.container, props.style]}
+      onPress={onPress}
+    >
       <View
         style={[
           styles.button,
-          { backgroundColor: Colors[colorScheme].buttonBackgroundColor },
+          {
+            backgroundColor: disabled
+              ? Colors[colorScheme].buttonDisabledBackgroundColor
+              : Colors[colorScheme].buttonBackgroundColor,
+          },
         ]}
       >
         <Text
