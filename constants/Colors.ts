@@ -3,6 +3,7 @@ const tintColorDark = '#fff';
 
 export default {
   light: {
+    invalidText: '#971D32',
     text: '#000',
     buttonTextColor: '#FFF',
     background: '#FFF',
@@ -13,8 +14,10 @@ export default {
     inputBorder: '#BBB',
     inputLabel: '#888',
     buttonBackgroundColor: '#971D32',
+    buttonDisabledBackgroundColor: '#D5D5D5',
   },
   dark: {
+    invalidText: '#971D32',
     text: '#FFF',
     background: '#000',
     buttonTextColor: '#000',
@@ -25,5 +28,6 @@ export default {
     inputBorder: '#BBB',
     inputLabel: '#FFF',
     buttonBackgroundColor: '#971D32',
+    buttonDisabledBackgroundColor: '#D5D5D5',
   },
 };
