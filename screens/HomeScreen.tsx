@@ -1,54 +1,23 @@
 import { StyleSheet, Text } from 'react-native';
-import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore/lite';
-import { db } from '../firebase';
+import { useEffect } from 'react';
 
 import HeaderImage from '../components/HeaderImage';
 import RaceItem from '../components/RaceItem';
 import SectionHeader from '../components/SectionHeader';
 import { SafeAreaView } from '../components/Themed';
 import UpdateItem from '../components/UpdateItem';
-import { Race, Update } from '../components/types';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { getUpdates } from '../redux/slices/updatesSlice';
+import { getRaces } from '../redux/slices/scheduleSlice';
 
 export default function HomeScreen() {
-  const [races, setRaces] = useState<Race[] | null>(null);
-  const racesCollectionRef = collection(db, 'races');
-  const [updates, setUpdates] = useState<Update[] | null>(null);
-  const updatesCollectionRef = collection(db, 'updates');
+  const dispatch = useAppDispatch();
+  const races = useAppSelector((state) => state.schedule.races);
+  const updates = useAppSelector((state) => state.updates.data);
 
   useEffect(() => {
-    const getupdates = async () => {
-      const updateDataRaw = await getDocs(updatesCollectionRef);
-      const updateData = updateDataRaw.docs.map((doc) => {
-        const { author, body, date, position } = doc.data();
-        return {
-          author,
-          body,
-          date,
-          position,
-          id: doc.id,
-        };
-      });
-      setUpdates(updateData);
-    };
-    const getRaces = async () => {
-      const raceDataRaw = await getDocs(racesCollectionRef);
-      const raceData = raceDataRaw.docs.map((doc) => {
-        const { boathouse, end_date, location, race_name, start_date } =
-          doc.data();
-        return {
-          boathouse,
-          end_date,
-          location,
-          race_name,
-          start_date,
-          id: doc.id,
-        };
-      });
-      setRaces(raceData);
-    };
-    getupdates();
-    getRaces();
+    dispatch(getUpdates());
+    dispatch(getRaces());
   }, []);
   return (
     <SafeAreaView style={styles.container}>
