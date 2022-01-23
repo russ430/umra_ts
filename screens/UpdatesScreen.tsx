@@ -1,40 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore/lite';
-import { db } from '../firebase';
+import { Text, View } from '../components/Themed';
 
 import { SafeAreaView } from '../components/Themed';
 import UpdateItem from '../components/UpdateItem';
-import { Update } from '../components/types';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { getUpdates } from '../redux/slices/updatesSlice';
 
 export default function UpdatesScreen() {
-  const [updates, setUpdates] = useState<Update[] | null>(null);
-  const updatesCollectionRef = collection(db, 'updates');
+  const dispatch = useAppDispatch();
+  const updates = useAppSelector((state) => state.updates.data);
 
   useEffect(() => {
-    const getupdates = async () => {
-      const data = await getDocs(updatesCollectionRef);
-      const updateData = data.docs.map((doc) => {
-        const { author, body, date, position } = doc.data();
-        return {
-          author,
-          body,
-          date,
-          position,
-          id: doc.id,
-        };
-      });
-      setUpdates(updateData);
-    };
-    getupdates();
+    dispatch(getUpdates());
   }, []);
   return (
     <SafeAreaView style={styles.container}>
-      {updates
-        ? updates.map((update) => (
+      <View>
+        {updates ? (
+          updates.map((update) => (
             <UpdateItem key={update.id} update={update} />
           ))
-        : null}
+        ) : (
+          <Text>Loading...</Text>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
