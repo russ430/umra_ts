@@ -9,12 +9,10 @@ export interface UserData {
 }
 
 interface InitialState {
-  isLoading: Boolean;
   data: UserData | null;
 }
 
 const initialState: InitialState = {
-  isLoading: false,
   data: null,
 };
 
