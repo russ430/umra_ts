@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
-  KeyboardAvoidingView,
   Platform,
   Pressable,
+  SafeAreaView,
   StyleSheet,
   TextInput,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useAppDispatch } from '../redux/hooks';
 import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
 import {
@@ -15,15 +16,26 @@ import {
 } from 'firebase/auth';
 import { db } from '../firebase';
 import * as EmailValidator from 'email-validator';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+// REDUX
 import { setUser, UserData } from '../redux/slices/userSlice';
+
+// COMPONENTS
 import HeaderImage from '../components/HeaderImage';
 import Button from '../components/Button';
-import { SafeAreaView, Text, View } from '../components/Themed';
+import { Text, View } from '../components/Themed';
+
+// CONSTANTS
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
-export default function AuthScreen() {
+// TYPES
+import { RootStackParamList } from '../types';
+
+type AuthScreenProps = NativeStackScreenProps<RootStackParamList, 'Auth'>;
+
+const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => {
   const [isLoginForm, setIsLoginForm] = useState(true);
   const [email, onChangeEmail] = useState('');
   const [isValidEmail, setisValidEmail] = useState(true);
@@ -77,7 +89,7 @@ export default function AuthScreen() {
 
   const onChangePasswordHandler = (text: string) => {
     setInvalidCredentials(false);
-    if (text.length < 6) {
+    if (text.length < 6 && !isLoginForm) {
       setIsValidPassword(false);
     } else {
       setIsValidPassword(true);
@@ -114,6 +126,7 @@ export default function AuthScreen() {
       .then((userCredential) => {
         getUserData(userCredential.user.uid);
         resetInputs();
+        navigation.navigate('Root');
       })
       .catch((error) => {
         handleLoginErrors({ name: error.name, code: error.code });
@@ -169,10 +182,13 @@ export default function AuthScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+    <SafeAreaView
+      style={[
+        styles.outerContainer,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
+    >
+      <KeyboardAwareScrollView contentContainerStyle={styles.innerContainer}>
         <HeaderImage />
         <Text style={styles.header}>{isLoginForm ? 'Login' : 'Signup'}</Text>
         <View style={styles.form}>
@@ -304,14 +320,18 @@ export default function AuthScreen() {
             </Text>
           </Pressable>
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
+  outerContainer: {
     flex: 1,
+  },
+  innerContainer: {
+    padding: 16,
+    paddingBottom: 48,
   },
   form: {
     marginTop: 24,
@@ -343,3 +363,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default AuthScreen;
