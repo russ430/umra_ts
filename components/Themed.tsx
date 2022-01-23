@@ -7,6 +7,7 @@ import {
   SafeAreaView as DefaultSafeAreaView,
   Text as DefaultText,
   View as DefaultView,
+  ScrollView,
 } from 'react-native';
 
 import Colors from '../constants/Colors';
@@ -59,7 +60,7 @@ export function SafeAreaView(props: ViewProps) {
 
   return (
     <DefaultSafeAreaView style={[{ backgroundColor }, style]} {...otherProps}>
-      <View style={{ padding: 16 }}>{children}</View>
+      <ScrollView style={{ padding: 16 }}>{children}</ScrollView>
     </DefaultSafeAreaView>
   );
 }
