@@ -23,7 +23,7 @@
     "email-validator": "^2.0.4",
     "expo": "~44.0.0",
     "expo-asset": "~8.4.6",
-    "expo-constants": "~13.0.0",
+    "expo-constants": "~13.0.1",
     "expo-font": "~10.0.4",
     "expo-linking": "~3.0.0",
     "expo-splash-screen": "~0.14.1",
