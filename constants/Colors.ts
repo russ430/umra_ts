@@ -1,5 +1,4 @@
 const tintColorLight = '#971d32';
-const tintColorDark = '#fff';
 
 export default {
   light: {
@@ -7,8 +6,11 @@ export default {
     text: '#000',
     buttonTextColor: '#FFF',
     background: '#FFF',
+    headerTitleColor: tintColorLight,
     tint: tintColorLight,
-    tabIconDefault: '#ccc',
+    tabBarBackground: '#FFF',
+    tabBarBorder: '#DDD',
+    tabIconDefault: '#CCC',
     tabIconSelected: tintColorLight,
     separator: '#000',
     inputBorder: '#BBB',
@@ -21,8 +23,11 @@ export default {
     text: '#000',
     buttonTextColor: '#FFF',
     background: '#FFF',
+    headerTitleColor: tintColorLight,
     tint: tintColorLight,
-    tabIconDefault: '#ccc',
+    tabBarBackground: '#FFF',
+    tabBarBorder: '#DDD',
+    tabIconDefault: '#CCC',
     tabIconSelected: tintColorLight,
     separator: '#000',
     inputBorder: '#BBB',
